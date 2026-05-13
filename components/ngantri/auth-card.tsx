@@ -20,7 +20,7 @@ export function AuthCard({ mode }: { mode: "login" | "register" }) {
       <Card className="w-full max-w-md rounded-[28px] border-slate-100 bg-white shadow-xl shadow-slate-900/5">
         <CardContent className="p-6">
           <div className="mb-7">
-            <NgantriLogo iconClassName="size-12" showText={false} />
+            <NgantriLogo iconClassName="size-12" />
             <h1 className="mt-5 text-3xl font-black">{isRegister ? "Daftar Ngantri" : "Masuk ke Ngantri"}</h1>
             <p className="mt-2 text-sm font-semibold text-slate-500">Kelola antrean, booking, dan cabang dari satu tempat.</p>
           </div>

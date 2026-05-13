@@ -4,14 +4,19 @@ import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  AlertTriangle,
   Check,
+  CheckCircle2,
   Clock3,
   MapPin,
+  MessageCircle,
+  Radio,
   Scissors,
   Settings2,
   Sparkles,
   Stethoscope,
   Store,
+  Ticket,
   TimerReset,
   Wrench,
 } from "lucide-react";
@@ -326,32 +331,13 @@ function BeforeAfterSection() {
     <section id="cerita" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
       <SectionIntro
         eyebrow="Sebelum vs Sesudah Ngantri"
-        title="Dari nunggu tanpa kabar jadi datang pas giliran."
-        text="Masalah antrean kecil biasanya bukan teknologinya. Masalahnya kepastian."
+        title="Dari 'masih lama?' jadi tahu kapan harus berangkat."
+        text="Pelanggan nggak perlu menunggu tanpa kepastian. Bisnis juga nggak perlu balas chat antrean satu-satu."
       />
-      <div className="mt-10 grid gap-5 lg:grid-cols-2">
-        <Card className="overflow-hidden rounded-[28px] border-red-100 bg-white shadow-sm">
-          <CardContent className="p-5 sm:p-7">
-            <Badge className="rounded-full bg-red-50 text-red-700 hover:bg-red-50">Sebelum</Badge>
-            <div className="mt-6 space-y-4">
-              <StoryBubble bad text='Tanya via WA: "Mas masih lama?"' />
-              <StoryBubble bad text="Datang langsung, ternyata masih 8 orang." />
-              <StoryBubble bad text="Admin lupa catat booking, pelanggan jadi dobel." />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden rounded-[28px] border-emerald-100 bg-white shadow-sm">
-          <CardContent className="p-5 sm:p-7">
-            <Badge className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-50">
-              Sesudah
-            </Badge>
-            <div className="mt-6 space-y-4">
-              <StoryBubble text="Ambil nomor dari rumah, sambil lanjut kerja." />
-              <StoryBubble text="Dapat estimasi waktu yang masuk akal." />
-              <StoryBubble text="Berangkat saat 3 antrean lagi. Sampai, langsung dekat giliran." />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="relative mt-10 grid items-stretch gap-5 lg:grid-cols-[1fr_auto_1fr] lg:gap-4">
+        <ChaosChatCard />
+        <JourneyConnector />
+        <LiveQueuePreviewCard />
       </div>
     </section>
   );
@@ -708,21 +694,266 @@ function Metric({ icon: Icon, label, value }: { icon: LucideIcon; label: string;
   );
 }
 
-function StoryBubble({ text, bad }: { text: string; bad?: boolean }) {
+function ChaosChatCard() {
   return (
-    <div
-      className={`flex items-start gap-3 rounded-[24px] border p-4 ${
-        bad ? "border-red-100 bg-red-50/70" : "border-emerald-100 bg-emerald-50/70"
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.24 }}
+    >
+      <Card className="relative h-full overflow-hidden rounded-[28px] border-red-100 bg-gradient-to-br from-red-50 via-orange-50 to-white shadow-xl shadow-red-950/5">
+        <CardContent className="relative min-h-[520px] p-5 sm:p-7">
+          <div className="absolute -right-10 top-10 size-36 rounded-full bg-orange-200/30 blur-3xl" />
+          <div className="absolute -bottom-12 -left-10 size-44 rounded-full bg-red-200/30 blur-3xl" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <SectionBadge tone="danger" icon={AlertTriangle} text="Sebelum" />
+              <h3 className="mt-4 text-2xl font-black leading-tight text-slate-950">
+                Antrian manual bikin pelanggan dan admin sama-sama capek.
+              </h3>
+            </div>
+            <StatusChip tone="danger" text="Tidak pasti" />
+          </div>
+
+          <div className="relative mt-7 rounded-[24px] border border-white/80 bg-white/70 p-4 shadow-sm">
+            <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <span className="grid size-9 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+                <MessageCircle className="size-4" />
+              </span>
+              <div>
+                <p className="text-sm font-black">Chat pelanggan</p>
+                <p className="text-xs font-bold text-slate-400">Barber Adi, 10.18</p>
+              </div>
+            </div>
+            <MessyChatBubble text="Mas, masih lama?" />
+            <MessyChatBubble admin text="Sebentar ya kak, saya cek dulu." />
+            <MessyChatBubble text="Kalau datang sekarang aman nggak?" />
+          </div>
+
+          <div className="relative mt-5 grid gap-3 sm:grid-cols-[0.95fr_1.05fr]">
+            <TiltedNote className="-rotate-2" title="Catatan meja" text="A-13? A-14? booking jam 11.00" />
+            <TiltedNote
+              className="rotate-2 sm:mt-7"
+              danger
+              title="Tumpang tindih"
+              text="Booking dobel karena catatan manual."
+            />
+          </div>
+
+          <div className="relative mt-5 grid gap-3">
+            <WarningStrip text="Datang langsung, ternyata masih 8 orang." />
+            <WarningStrip text="Admin bolak-balik cek urutan dan balas chat." orange />
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function LiveQueuePreviewCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.24, delay: 0.12 }}
+    >
+      <Card className="relative h-full overflow-hidden rounded-[28px] border-emerald-100 bg-gradient-to-br from-emerald-50 via-blue-50 to-white shadow-xl shadow-emerald-950/5">
+        <CardContent className="relative min-h-[520px] p-5 sm:p-7">
+          <div className="absolute -right-12 -top-10 size-44 rounded-full bg-blue-200/40 blur-3xl" />
+          <div className="absolute -bottom-16 left-12 size-48 rounded-full bg-emerald-200/40 blur-3xl" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <SectionBadge tone="success" icon={CheckCircle2} text="Sesudah" />
+              <h3 className="mt-4 text-2xl font-black leading-tight text-slate-950">
+                Semua orang tahu posisi antrean, estimasi waktu, dan kapan harus datang.
+              </h3>
+            </div>
+            <StatusChip tone="success" text="Realtime & jelas" />
+          </div>
+
+          <div className="relative mx-auto mt-7 max-w-sm rounded-[30px] border border-slate-200 bg-slate-950 p-3 shadow-2xl shadow-blue-950/15">
+            <div className="rounded-[24px] bg-white p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase text-slate-400">Nomor kamu</p>
+                  <p className="mt-1 text-4xl font-black text-blue-600">A-16</p>
+                </div>
+                <StatusChip tone="success" text="Live" compact />
+              </div>
+              <div className="mt-5 rounded-[22px] bg-blue-600 p-4 text-white">
+                <div className="flex items-center gap-2 text-sm font-bold text-blue-100">
+                  <Radio className="size-4" />
+                  Sekarang dilayani
+                </div>
+                <p className="mt-2 text-3xl font-black">A-13</p>
+              </div>
+              <QueueProgressMini />
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <InfoPill icon={Ticket} text="3 antrean lagi" />
+                <InfoPill icon={Clock3} text="18 menit" />
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-5 grid gap-3 sm:grid-cols-2">
+            <SuccessTile label="Estimasi datang" value="18 menit" />
+            <SuccessTile label="Pesan otomatis" value="Berangkat sekarang" />
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function JourneyConnector() {
+  return (
+    <div className="flex items-center justify-center py-1 lg:px-1">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        className="z-10 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-3 text-sm font-black text-blue-700 shadow-xl shadow-blue-950/10 lg:max-w-[132px] lg:flex-col lg:rounded-[24px] lg:text-center"
+      >
+        <span>Dari nebak-nebak</span>
+        <ArrowRight className="size-4 rotate-90 lg:rotate-0" />
+        <span>jadi pasti</span>
+      </motion.div>
+    </div>
+  );
+}
+
+function SectionBadge({
+  icon: Icon,
+  text,
+  tone,
+}: {
+  icon: LucideIcon;
+  text: string;
+  tone: "danger" | "success";
+}) {
+  return (
+    <Badge
+      className={`rounded-full px-3 py-1.5 font-black hover:bg-current ${
+        tone === "danger" ? "bg-red-100 text-red-700 hover:bg-red-100" : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
       }`}
     >
-      <span
-        className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-full ${
-          bad ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"
-        }`}
-      >
-        {bad ? "!" : <Check className="size-4" />}
-      </span>
-      <p className="font-bold leading-7 text-slate-800">{text}</p>
+      <Icon className="mr-2 size-4" />
+      {text}
+    </Badge>
+  );
+}
+
+function StatusChip({
+  text,
+  tone,
+  compact,
+}: {
+  text: string;
+  tone: "danger" | "success";
+  compact?: boolean;
+}) {
+  const isSuccess = tone === "success";
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center gap-2 rounded-full border bg-white px-3 py-1.5 text-xs font-black shadow-sm ${
+        isSuccess ? "border-emerald-100 text-emerald-700" : "border-orange-100 text-orange-700"
+      }`}
+    >
+      {isSuccess ? <LiveDot /> : <span className="size-2 rounded-full bg-orange-500" />}
+      {!compact && text}
+      {compact && <span>{text}</span>}
+    </span>
+  );
+}
+
+function MessyChatBubble({ text, admin }: { text: string; admin?: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: admin ? -10 : 10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className={`mb-3 max-w-[86%] rounded-[22px] p-3 text-sm font-bold leading-6 shadow-sm ${
+        admin
+          ? "rounded-bl-md bg-slate-100 text-slate-700"
+          : "ml-auto rounded-br-md bg-white text-slate-950"
+      }`}
+    >
+      {text}
+    </motion.div>
+  );
+}
+
+function TiltedNote({
+  title,
+  text,
+  className,
+  danger,
+}: {
+  title: string;
+  text: string;
+  className?: string;
+  danger?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-[22px] border bg-white p-4 shadow-sm ${className ?? ""} ${
+        danger ? "border-red-100" : "border-orange-100"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-black uppercase text-slate-400">{title}</p>
+        <span className={`h-2 w-8 rounded-full ${danger ? "bg-red-400" : "bg-orange-400"}`} />
+      </div>
+      <p className="mt-3 text-sm font-black leading-6 text-slate-800 line-through decoration-red-400 decoration-2">
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function WarningStrip({ text, orange }: { text: string; orange?: boolean }) {
+  return (
+    <div
+      className={`flex items-center gap-3 rounded-[20px] border p-3 text-sm font-black ${
+        orange ? "border-orange-100 bg-orange-100/70 text-orange-800" : "border-red-100 bg-red-100/70 text-red-800"
+      }`}
+    >
+      <AlertTriangle className="size-4 shrink-0" />
+      {text}
+    </div>
+  );
+}
+
+function QueueProgressMini() {
+  return (
+    <div className="mt-4">
+      <div className="mb-2 flex items-center justify-between text-xs font-black text-slate-500">
+        <span>A-13</span>
+        <span>A-16</span>
+      </div>
+      <div className="h-3 rounded-full bg-slate-100">
+        <motion.div
+          initial={{ width: "38%" }}
+          whileInView={{ width: "76%" }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.1, ease: "easeOut" }}
+          className="h-full rounded-full bg-gradient-to-r from-blue-600 to-emerald-500"
+        />
+      </div>
+      <p className="mt-3 text-sm font-black text-emerald-700">Silakan berangkat sekarang</p>
+    </div>
+  );
+}
+
+function SuccessTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[22px] border border-emerald-100 bg-white/80 p-4 shadow-sm">
+      <p className="text-xs font-black uppercase text-slate-400">{label}</p>
+      <p className="mt-2 font-black text-slate-950">{value}</p>
     </div>
   );
 }
