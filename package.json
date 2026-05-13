@@ -5,6 +5,8 @@
   "packageManager": "pnpm@11.1.0",
   "scripts": {
     "dev": "next dev",
+    "api:dev": "cd backend && go run ./cmd/api",
+    "api:test": "cd backend && go test ./...",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
