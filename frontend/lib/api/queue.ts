@@ -18,6 +18,10 @@ export async function createQueue(input: CreateQueueInput) {
   });
 }
 
+export async function fetchQueue(queueId: string) {
+  return apiRequest<QueueItem>(`/api/queues/${queueId}`);
+}
+
 export async function callNextQueue(branchId: string, staffId?: string) {
   return apiRequest<QueueItem>(`/api/branches/${branchId}/queues/call-next`, {
     method: "POST",
