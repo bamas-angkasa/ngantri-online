@@ -11,6 +11,10 @@
     "typecheck": "npm --prefix frontend run typecheck",
     "frontend:install": "npm --prefix frontend install",
     "api:dev": "cd backend && go run ./cmd/api",
-    "api:test": "cd backend && go test ./..."
+    "api:test": "cd backend && go test ./...",
+    "api:migrate": "cd backend && if not exist .bin mkdir .bin && go build -o ./.bin/migrate.exe ./cmd/migrate && ./.bin/migrate.exe up",
+    "api:migrate:status": "cd backend && if not exist .bin mkdir .bin && go build -o ./.bin/migrate.exe ./cmd/migrate && ./.bin/migrate.exe status",
+    "api:migrate:down": "cd backend && if not exist .bin mkdir .bin && go build -o ./.bin/migrate.exe ./cmd/migrate && ./.bin/migrate.exe down",
+    "api:seed": "cd backend && if not exist .bin mkdir .bin && go build -o ./.bin/seed.exe ./cmd/seed && ./.bin/seed.exe"
   }
 }

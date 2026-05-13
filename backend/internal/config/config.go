@@ -1,6 +1,10 @@
 package config
 
-import "os"
+import (
+	"bufio"
+	"os"
+	"strings"
+)
 
 type Config struct {
 	HTTPAddr         string
@@ -15,6 +19,9 @@ type Config struct {
 }
 
 func Load() Config {
+	loadDotEnv(".env")
+	loadDotEnv("../.env")
+
 	return Config{
 		HTTPAddr:         getEnv("HTTP_ADDR", ":8080"),
 		DatabaseURL:      getEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ngantri?sslmode=disable"),
@@ -33,4 +40,34 @@ func getEnv(key string, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func loadDotEnv(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+
+		key = strings.TrimSpace(key)
+		if key == "" || os.Getenv(key) != "" {
+			continue
+		}
+
+		value = strings.TrimSpace(value)
+		value = strings.Trim(value, `"'`)
+		_ = os.Setenv(key, value)
+	}
 }

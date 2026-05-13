@@ -13,6 +13,7 @@ build/
 
 # Production
 dist/
+backend/.bin/
 
 # TypeScript
 *.tsbuildinfo

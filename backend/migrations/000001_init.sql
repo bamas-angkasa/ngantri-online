@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE users (
@@ -179,3 +180,17 @@ CREATE TABLE notification_logs (
   status TEXT NOT NULL DEFAULT 'mock_sent',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- +goose Down
+DROP TABLE IF EXISTS notification_logs;
+DROP TABLE IF EXISTS usage_counters;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS themes;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS queues;
+DROP TABLE IF EXISTS services;
+DROP TABLE IF EXISTS branch_staff;
+DROP TABLE IF EXISTS branches;
+DROP TABLE IF EXISTS business_members;
+DROP TABLE IF EXISTS businesses;
+DROP TABLE IF EXISTS users;

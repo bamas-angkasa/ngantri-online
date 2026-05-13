@@ -1,14 +1,13 @@
 # Ngantri Backend
 
 Go REST API scaffold for the Ngantri MVP. The backend exposes a REST API,
-stores data in PostgreSQL, and includes schema + demo seed migrations for local
-development.
+stores data in PostgreSQL, and includes Goose schema migrations plus optional
+demo seed data for local development.
 
 ## Prerequisites
 
 - Go 1.26 or newer
 - PostgreSQL 14 or newer
-- `psql` CLI available in your terminal path
 
 ## Environment
 
@@ -33,15 +32,21 @@ PUBLIC_API_BASE_URL=http://localhost:8080
 APP_ENV=development
 ```
 
-Go does not automatically load `.env` files. Either export the values in your
-terminal, or set at least `DATABASE_URL` before running database commands:
+Backend commands automatically load `.env` files when run from the `backend`
+directory. Use `backend/.env` for backend-only local values, or keep shared
+values in the repo-root `.env`. Shell environment variables still take
+precedence over file values.
+
+For local database commands, make sure `DATABASE_URL` matches your PostgreSQL
+user, password, host, port, and database:
 
 ```powershell
 $env:DATABASE_URL="postgres://postgres:postgres@localhost:5432/ngantri?sslmode=disable"
 ```
 
-If you keep the default values from `.env.example`, the API can also run without
-manually setting variables because the code has development fallbacks.
+The default `postgres:postgres` value is only a development fallback. If your
+local PostgreSQL password is different, update `DATABASE_URL` in `backend/.env`
+or your shell before running migrations.
 
 ## Install
 
@@ -69,24 +74,60 @@ createdb ngantri
 If your PostgreSQL user or password is different from the default, update
 `DATABASE_URL` in `.env` and in your current shell.
 
-## Run Migrations and Seed Data
+## Run Migrations
 
-Run the schema migration first:
-
-```powershell
-psql $env:DATABASE_URL -f migrations/000001_init.sql
-```
-
-Then run the demo seed:
+Migrations use Goose and are run through the backend migration command.
 
 ```powershell
-psql $env:DATABASE_URL -f migrations/000002_seed_demo.sql
+New-Item -ItemType Directory -Force .bin
+go build -o ./.bin/migrate.exe ./cmd/migrate
+./.bin/migrate.exe up
 ```
 
-Migration order:
+Or from the repo root:
+
+```powershell
+npm run api:migrate
+```
+
+Check migration status:
+
+```powershell
+./.bin/migrate.exe status
+```
+
+Rollback the latest migration:
+
+```powershell
+./.bin/migrate.exe down
+```
+
+Current migrations:
 
 1. `migrations/000001_init.sql`
-2. `migrations/000002_seed_demo.sql`
+
+## Run Demo Seed Data
+
+Seed data is separate from migrations, so `migrate up` never inserts demo data.
+Run the demo seed only when you want local sample data:
+
+```powershell
+New-Item -ItemType Directory -Force .bin
+go build -o ./.bin/seed.exe ./cmd/seed
+./.bin/seed.exe
+```
+
+Or from the repo root:
+
+```powershell
+npm run api:seed
+```
+
+The default seed file is `seeds/demo.sql`. You can pass another SQL file path:
+
+```powershell
+./.bin/seed.exe seeds/demo.sql
+```
 
 The seed creates:
 
@@ -158,7 +199,8 @@ npm run api:test
 - `internal/pkg/auth`: password hashing and future JWT helpers
 - `internal/pkg/database`: PostgreSQL connection helper
 - `internal/pkg/notification`: notification provider abstraction
-- `migrations`: PostgreSQL schema and seed data
+- `migrations`: Goose PostgreSQL schema migrations
+- `seeds`: optional local/demo seed SQL files
 - `openapi.yaml`: API documentation starter
 
 ## Multi-Tenant Backend Plan
