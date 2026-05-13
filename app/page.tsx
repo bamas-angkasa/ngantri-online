@@ -5,19 +5,26 @@ import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   AlertTriangle,
+  BarChart3,
+  BriefcaseBusiness,
+  CalendarDays,
   Check,
   CheckCircle2,
   Clock3,
+  LockKeyhole,
   MapPin,
   MessageCircle,
   Radio,
   Scissors,
   Settings2,
+  ShieldCheck,
   Sparkles,
   Stethoscope,
   Store,
   Ticket,
   TimerReset,
+  Users,
+  Zap,
   Wrench,
 } from "lucide-react";
 
@@ -29,45 +36,60 @@ import { NgantriLogo } from "@/components/ngantri/logo";
 
 const modules = [
   {
+    icon: BriefcaseBusiness,
     title: "Live Queue",
     text: "Nomor aktif, sisa antrean, dan status layanan tampil realtime.",
-    accent: "bg-blue-50 text-blue-700 border-blue-100",
+    tag: "Realtime",
+    tone: "blue",
     fragment: <QueueMini now="A-12" next="A-13" />,
   },
   {
+    icon: Clock3,
     title: "Estimasi Waktu",
-    text: "Durasi tiap layanan bisa diatur sesuai ritme bisnis.",
-    accent: "bg-amber-50 text-amber-700 border-amber-100",
+    text: "Durasi tiap layanan menyesuaikan jam operasional dan kondisi antrean.",
+    tag: "Dinamis",
+    tone: "orange",
     fragment: <TimeMini />,
   },
   {
+    icon: CalendarDays,
     title: "Reservasi Online",
     text: "Pelanggan ambil nomor dari rumah tanpa install aplikasi.",
-    accent: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    tag: "Praktis",
+    tone: "green",
     fragment: <BookingMini />,
   },
   {
+    icon: Store,
     title: "Halaman Bisnis",
     text: "Mini website antrean dengan warna dan info bisnis sendiri.",
-    accent: "bg-slate-50 text-slate-700 border-slate-100",
+    tag: "Profesional",
+    tone: "purple",
     fragment: <PageMini />,
   },
   {
+    icon: MessageCircle,
     title: "Notifikasi WhatsApp-style",
-    text: "Pesan familiar saat nomor makin dekat dengan giliran.",
-    accent: "bg-green-50 text-green-700 border-green-100",
+    text: "Pesan otomatis saat nomor makin dekat dengan giliran.",
+    tag: "Familiar",
+    tone: "green",
     fragment: <ChatMini />,
   },
   {
+    icon: Users,
     title: "Multi Staff",
     text: "Pisahkan antrean per kursi, mekanik, dokter, atau counter.",
-    accent: "bg-orange-50 text-orange-700 border-orange-100",
+    tag: "Fleksibel",
+    tone: "orange",
     fragment: <StaffMini />,
   },
   {
+    icon: BarChart3,
     title: "Analytics Sederhana",
     text: "Lihat jam ramai, rata-rata tunggu, dan layanan favorit.",
-    accent: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    tag: "Berguna",
+    tone: "purple",
+    wide: true,
     fragment: <ChartMini />,
   },
 ];
@@ -78,28 +100,44 @@ const businesses = [
     name: "Barbershop",
     service: "Potong 20 menit",
     queue: "A-16 siap 18 menit lagi",
-    color: "bg-blue-600",
+    rhythm: "Cepat, kursi bergantian",
+    wait: "18 menit",
+    lane: "Kursi 2",
+    tone: "blue",
+    samples: ["A-13", "A-14", "A-15"],
   },
   {
     icon: Wrench,
     name: "Bengkel",
     service: "Ganti oli 15 menit",
     queue: "B-08 tinggal 2 motor",
-    color: "bg-amber-500",
+    rhythm: "Bisa melonjak saat sore",
+    wait: "2 motor",
+    lane: "Bay cepat",
+    tone: "orange",
+    samples: ["B-06", "B-07", "B-08"],
   },
   {
     icon: Stethoscope,
     name: "Dokter gigi",
     service: "Konsultasi 30 menit",
     queue: "D-04 datang 09.40",
-    color: "bg-emerald-500",
+    rhythm: "Slot lebih tenang",
+    wait: "09.40",
+    lane: "Ruang 1",
+    tone: "green",
+    samples: ["D-02", "D-03", "D-04"],
   },
   {
     icon: Sparkles,
     name: "Salon",
     service: "Treatment 60 menit",
     queue: "S-11 slot sore aman",
-    color: "bg-rose-500",
+    rhythm: "Layanan panjang",
+    wait: "Sore",
+    lane: "Stylist 3",
+    tone: "rose",
+    samples: ["S-09", "S-10", "S-11"],
   },
 ];
 
@@ -131,6 +169,56 @@ const serviceDurations = [
   ["Coloring", "90 min", "w-11/12 bg-emerald-500"],
   ["Ganti oli", "15 min", "w-1/5 bg-slate-900"],
 ];
+
+const moduleTones = {
+  blue: {
+    icon: "bg-blue-600 text-white",
+    chip: "bg-emerald-50 text-emerald-700",
+    preview: "border-blue-100 bg-blue-50/70 text-blue-700",
+  },
+  orange: {
+    icon: "bg-orange-500 text-white",
+    chip: "bg-orange-50 text-orange-700",
+    preview: "border-orange-100 bg-orange-50/70 text-orange-700",
+  },
+  green: {
+    icon: "bg-emerald-500 text-white",
+    chip: "bg-emerald-50 text-emerald-700",
+    preview: "border-emerald-100 bg-emerald-50/70 text-emerald-700",
+  },
+  purple: {
+    icon: "bg-violet-500 text-white",
+    chip: "bg-violet-50 text-violet-700",
+    preview: "border-violet-100 bg-violet-50/70 text-violet-700",
+  },
+} as const;
+
+const businessTones = {
+  blue: {
+    icon: "bg-blue-600 text-white",
+    chip: "bg-blue-50 text-blue-700",
+    text: "text-blue-700",
+    active: "bg-blue-600 text-white",
+  },
+  orange: {
+    icon: "bg-orange-500 text-white",
+    chip: "bg-orange-50 text-orange-700",
+    text: "text-orange-700",
+    active: "bg-orange-500 text-white",
+  },
+  green: {
+    icon: "bg-emerald-500 text-white",
+    chip: "bg-emerald-50 text-emerald-700",
+    text: "text-emerald-700",
+    active: "bg-emerald-500 text-white",
+  },
+  rose: {
+    icon: "bg-rose-500 text-white",
+    chip: "bg-rose-50 text-rose-700",
+    text: "text-rose-700",
+    active: "bg-rose-500 text-white",
+  },
+} as const;
 
 export default function Home() {
   return (
@@ -345,26 +433,23 @@ function BeforeAfterSection() {
 
 function ModulesSection() {
   return (
-    <section id="fitur" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+    <section id="fitur" className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div className="absolute inset-x-0 top-10 -z-10 mx-auto h-[520px] max-w-5xl rounded-full bg-blue-100/40 blur-3xl" />
       <SectionIntro
         eyebrow="Bukan cuma nomor antrean"
         title="Sistem kecil yang terasa hidup di meja admin."
         text="Setiap modul dibuat untuk kebiasaan operasional UMKM: cepat dilihat, mudah diubah, dan jelas untuk pelanggan."
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {modules.map((item) => (
-          <motion.div key={item.title} whileHover={{ y: -6 }} transition={{ duration: 0.2 }}>
-            <Card className="h-full rounded-[26px] border-slate-100 bg-white shadow-sm">
-              <CardContent className="flex h-full flex-col gap-5 p-5">
-                <div className={`rounded-[22px] border p-4 ${item.accent}`}>{item.fragment}</div>
-                <div>
-                  <h3 className="text-lg font-black">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <ModuleCard key={item.title} item={item} />
         ))}
+      </div>
+      <div className="mt-7 grid gap-3 rounded-[26px] border border-slate-100 bg-white/80 p-4 shadow-xl shadow-slate-900/5 backdrop-blur md:grid-cols-4">
+        <ModulePromise icon={Zap} title="Ringan & cepat" text="Tampilan realtime" />
+        <ModulePromise icon={LockKeyhole} title="Mudah digunakan" text="Tanpa pelatihan rumit" />
+        <ModulePromise icon={ShieldCheck} title="Aman & stabil" text="Data bisnis terjaga" />
+        <ModulePromise icon={BriefcaseBusiness} title="Dibuat untuk UMKM" text="Harga terjangkau" />
       </div>
     </section>
   );
@@ -378,29 +463,177 @@ function BusinessSection() {
         title="Beda layanan, beda ritme antreannya."
         text="Ngantri mengikuti cara kerja bisnis jasa lokal, dari kursi barber sampai bay bengkel."
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {businesses.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Card key={item.name} className="overflow-hidden rounded-[28px] border-0 bg-white shadow-sm">
-              <CardContent className="p-0">
-                <div className={`${item.color} p-5 text-white`}>
-                  <Icon className="size-7" />
-                  <h3 className="mt-5 text-xl font-black">{item.name}</h3>
-                  <p className="text-sm font-bold text-white/80">{item.service}</p>
-                </div>
-                <div className="p-5">
-                  <div className="rounded-[22px] border border-slate-100 bg-slate-50 p-4">
-                    <p className="text-xs font-black uppercase text-slate-500">Contoh antrean</p>
-                    <p className="mt-2 text-base font-black">{item.queue}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      <div className="mt-10 rounded-[34px] border border-slate-100 bg-white p-4 shadow-2xl shadow-slate-900/5 sm:p-5">
+        <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+          <RhythmHero />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {businesses.map((item) => (
+              <BusinessRhythmCard key={item.name} item={item} />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
+  );
+}
+
+function ModuleCard({ item }: { item: (typeof modules)[number] }) {
+  const Icon = item.icon;
+  const tone = moduleTones[item.tone as keyof typeof moduleTones];
+
+  return (
+    <motion.div
+      className={item.wide ? "md:col-span-2 lg:col-span-3" : ""}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.22 }}
+    >
+      <Card className="h-full overflow-hidden rounded-[28px] border-slate-100 bg-white/90 shadow-xl shadow-slate-900/5 backdrop-blur">
+        <CardContent className={`grid h-full gap-5 p-5 ${item.wide ? "lg:grid-cols-[0.9fr_1.5fr] lg:items-center" : ""}`}>
+          <div>
+            <div className="flex items-start justify-between gap-4">
+              <span className={`grid size-12 place-items-center rounded-[18px] ${tone.icon}`}>
+                <Icon className="size-5" />
+              </span>
+              <span className={`rounded-full px-3 py-1 text-xs font-black ${tone.chip}`}>{item.tag}</span>
+            </div>
+            <h3 className="mt-4 text-lg font-black text-slate-950">{item.title}</h3>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{item.text}</p>
+          </div>
+          <div className={`rounded-[24px] border p-4 ${tone.preview}`}>{item.fragment}</div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function ModulePromise({
+  icon: Icon,
+  title,
+  text,
+}: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-[22px] p-3">
+      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-blue-50 text-blue-700">
+        <Icon className="size-5" />
+      </span>
+      <div>
+        <p className="text-sm font-black text-slate-950">{title}</p>
+        <p className="text-xs font-semibold text-slate-500">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function RhythmHero() {
+  return (
+    <div className="relative overflow-hidden rounded-[28px] bg-slate-950 p-5 text-white sm:p-6">
+      <div className="absolute -right-16 -top-16 size-44 rounded-full bg-blue-500/30 blur-3xl" />
+      <div className="absolute -bottom-20 left-10 size-52 rounded-full bg-emerald-500/20 blur-3xl" />
+      <div className="relative">
+        <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">
+          Ritme hari ini
+        </Badge>
+        <h3 className="mt-5 text-3xl font-black leading-tight">
+          Satu sistem, banyak tempo kerja.
+        </h3>
+        <p className="mt-3 max-w-md text-sm font-semibold leading-7 text-slate-300">
+          Kursi barber bisa cepat, treatment salon bisa panjang, bengkel bisa ramai sore.
+          Ngantri menjaga estimasi tetap masuk akal untuk tiap layanan.
+        </p>
+        <div className="mt-7 rounded-[24px] border border-white/10 bg-white/10 p-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase text-slate-400">Live operations</p>
+              <p className="mt-1 text-xl font-black">4 bisnis aktif</p>
+            </div>
+            <span className="inline-flex items-center rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-black text-emerald-200">
+              <LiveDot />
+              Realtime
+            </span>
+          </div>
+          <div className="space-y-3">
+            <RhythmRow label="Barber" value="18m" width="w-2/5" color="bg-blue-500" />
+            <RhythmRow label="Bengkel" value="2 motor" width="w-3/5" color="bg-amber-400" />
+            <RhythmRow label="Dokter" value="09.40" width="w-1/3" color="bg-emerald-400" />
+            <RhythmRow label="Salon" value="60m" width="w-5/6" color="bg-rose-400" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BusinessRhythmCard({ item }: { item: (typeof businesses)[number] }) {
+  const Icon = item.icon;
+  const tone = businessTones[item.tone as keyof typeof businessTones];
+
+  return (
+    <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
+      <Card className="h-full overflow-hidden rounded-[26px] border-slate-100 bg-slate-50/80 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <span className={`grid size-11 place-items-center rounded-[18px] ${tone.icon}`}>
+              <Icon className="size-5" />
+            </span>
+            <span className={`rounded-full px-3 py-1 text-xs font-black ${tone.chip}`}>{item.lane}</span>
+          </div>
+          <h3 className="mt-4 text-lg font-black text-slate-950">{item.name}</h3>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{item.service}</p>
+          <div className="mt-4 rounded-[22px] border border-white bg-white p-3 shadow-sm">
+            <div className="mb-3 flex items-center justify-between text-xs font-black uppercase text-slate-400">
+              <span>{item.rhythm}</span>
+              <span className={tone.text}>{item.wait}</span>
+            </div>
+            <div className="flex gap-2">
+              {item.samples.map((sample, index) => (
+                <span
+                  key={sample}
+                  className={`flex-1 rounded-2xl px-2 py-2 text-center text-xs font-black ${
+                    index === 0 ? tone.active : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {sample}
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="mt-3 rounded-[18px] bg-white px-3 py-2 text-sm font-black text-slate-700">
+            {item.queue}
+          </p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function RhythmRow({
+  label,
+  value,
+  width,
+  color,
+}: {
+  label: string;
+  value: string;
+  width: string;
+  color: string;
+}) {
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between text-xs font-black text-slate-300">
+        <span>{label}</span>
+        <span>{value}</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/10">
+        <div className={`h-full rounded-full ${width} ${color}`} />
+      </div>
+    </div>
   );
 }
 
