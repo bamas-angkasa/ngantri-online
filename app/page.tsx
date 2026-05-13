@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NgantriLogo } from "@/components/ngantri/logo";
 
 const modules = [
   {
@@ -149,10 +150,7 @@ function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/70 bg-white/80 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a className="flex items-center gap-3" href="#">
-          <span className="grid size-10 place-items-center rounded-2xl bg-blue-600 text-sm font-black text-white shadow-lg shadow-blue-600/20">
-            Ng
-          </span>
-          <span className="text-lg font-black tracking-tight">Ngantri</span>
+          <NgantriLogo iconClassName="size-14" />
         </a>
         <div className="hidden items-center gap-6 text-sm font-semibold text-slate-600 md:flex">
           <a className="transition hover:text-blue-600" href="#cerita">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NgantriLogo } from "@/components/ngantri/logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -13,7 +14,9 @@ export default function PricingPage() {
   return (
     <main className="min-h-screen bg-[#F9FAFB] px-4 py-10 text-slate-950 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
-        <Link href="/" className="font-black text-blue-700">Ngantri</Link>
+        <Link href="/" className="inline-flex">
+          <NgantriLogo />
+        </Link>
         <h1 className="mt-8 text-4xl font-black">Harga yang ramah UMKM.</h1>
         <p className="mt-3 max-w-2xl text-slate-600">Mulai dari antrean digital sederhana, lalu naik kelas saat bisnis makin ramai.</p>
         <div className="mt-8 grid gap-4 lg:grid-cols-3">

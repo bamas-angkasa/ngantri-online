@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NgantriLogo } from "@/components/ngantri/logo";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -30,8 +31,7 @@ export function DashboardShell({
     <main className="min-h-screen bg-[#F9FAFB] text-slate-950">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-slate-200 bg-white p-5 lg:block">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-2xl bg-blue-600 text-sm font-black text-white">Ng</span>
-          <span className="text-lg font-black">Ngantri</span>
+          <NgantriLogo />
         </Link>
         <nav className="mt-8 space-y-1">
           {navItems.map(([label, href]) => (

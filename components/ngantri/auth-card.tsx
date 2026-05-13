@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 
+import { NgantriLogo } from "@/components/ngantri/logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { LoginInput, RegisterInput } from "@/lib/validation/auth";
@@ -19,7 +20,7 @@ export function AuthCard({ mode }: { mode: "login" | "register" }) {
       <Card className="w-full max-w-md rounded-[28px] border-slate-100 bg-white shadow-xl shadow-slate-900/5">
         <CardContent className="p-6">
           <div className="mb-7">
-            <div className="grid size-12 place-items-center rounded-2xl bg-blue-600 text-sm font-black text-white">Ng</div>
+            <NgantriLogo iconClassName="size-12" showText={false} />
             <h1 className="mt-5 text-3xl font-black">{isRegister ? "Daftar Ngantri" : "Masuk ke Ngantri"}</h1>
             <p className="mt-2 text-sm font-semibold text-slate-500">Kelola antrean, booking, dan cabang dari satu tempat.</p>
           </div>
