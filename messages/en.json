@@ -1,0 +1,16 @@
+{
+  "brand": "Ngantri",
+  "tagline": "Arrive when it is your turn.",
+  "actions": {
+    "joinQueue": "Get Queue Number",
+    "bookOnline": "Book Online",
+    "login": "Log in",
+    "register": "Register",
+    "callNext": "Call Next"
+  },
+  "queue": {
+    "nowServing": "Now Serving",
+    "estimatedWait": "Estimated Wait",
+    "threeMore": "3 queues left"
+  }
+}

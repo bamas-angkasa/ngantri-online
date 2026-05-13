@@ -1,0 +1,16 @@
+{
+  "brand": "Ngantri",
+  "tagline": "Datang pas giliranmu.",
+  "actions": {
+    "joinQueue": "Ambil Nomor",
+    "bookOnline": "Booking Online",
+    "login": "Masuk",
+    "register": "Daftar",
+    "callNext": "Panggil Berikutnya"
+  },
+  "queue": {
+    "nowServing": "Sekarang Dilayani",
+    "estimatedWait": "Estimasi Waktu",
+    "threeMore": "3 antrean lagi"
+  }
+}
