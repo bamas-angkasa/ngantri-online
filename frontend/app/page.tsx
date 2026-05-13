@@ -234,6 +234,7 @@ export default function Home() {
       <WhatsAppSection />
       <PricingSection />
       <FinalCta />
+      <Footer />
     </main>
   );
 }
@@ -848,7 +849,7 @@ function PricingSection() {
 
 function FinalCta() {
   return (
-    <section className="px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
+    <section className="px-4 pb-8 pt-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-blue-600 p-8 text-white shadow-2xl shadow-blue-600/20 sm:p-12 lg:p-16">
         <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
           <div>
@@ -866,6 +867,110 @@ function FinalCta() {
         </div>
       </div>
     </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="px-4 pb-10 pt-4 sm:px-6 lg:px-8 lg:pb-14">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[34px] border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
+        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1fr] lg:p-10">
+          <div>
+            <a className="inline-flex items-center gap-3" href="#">
+              <NgantriLogo iconClassName="size-14" />
+              <span className="text-xl font-black tracking-tight text-slate-950">Ngantri</span>
+            </a>
+            <p className="mt-4 max-w-sm text-sm font-semibold leading-7 text-slate-600">
+              Antrean realtime untuk UMKM jasa. Pelanggan tahu kapan berangkat,
+              admin lebih ringan mengatur meja layanan.
+            </p>
+            <div className="mt-5 inline-flex items-center rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+              <LiveDot />
+              Live queue ready
+            </div>
+          </div>
+
+          <FooterColumn
+            title="Produk"
+            links={[
+              ["Cerita", "#cerita"],
+              ["Fitur", "#fitur"],
+              ["Harga", "#harga"],
+              ["Halaman Bisnis", "#"],
+            ]}
+          />
+          <FooterColumn
+            title="Untuk UMKM"
+            links={[
+              ["Barbershop", "#fitur"],
+              ["Bengkel", "#fitur"],
+              ["Dokter gigi", "#fitur"],
+              ["Salon", "#fitur"],
+            ]}
+          />
+
+          <div className="rounded-[26px] bg-slate-50 p-4">
+            <p className="text-sm font-black text-slate-950">Contoh status hari ini</p>
+            <div className="mt-4 space-y-3">
+              <FooterStatus icon={Ticket} label="Nomor aktif" value="A-13" />
+              <FooterStatus icon={Clock3} label="Estimasi rata-rata" value="18 menit" />
+              <FooterStatus icon={ShieldCheck} label="Data bisnis" value="Terjaga" />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 border-t border-slate-100 px-6 py-5 text-sm font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+          <p>© 2026 Ngantri. Datang pas giliranmu.</p>
+          <div className="flex flex-wrap gap-4">
+            <a className="transition hover:text-blue-600" href="#">
+              Privasi
+            </a>
+            <a className="transition hover:text-blue-600" href="#">
+              Ketentuan
+            </a>
+            <a className="transition hover:text-blue-600" href="#">
+              Kontak
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterColumn({ title, links }: { title: string; links: [string, string][] }) {
+  return (
+    <div>
+      <p className="text-sm font-black text-slate-950">{title}</p>
+      <div className="mt-4 grid gap-3">
+        {links.map(([label, href]) => (
+          <a key={label} className="text-sm font-semibold text-slate-500 transition hover:text-blue-600" href={href}>
+            {label}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FooterStatus({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-[20px] bg-white p-3 shadow-sm">
+      <div className="flex items-center gap-3">
+        <span className="grid size-9 place-items-center rounded-2xl bg-blue-50 text-blue-700">
+          <Icon className="size-4" />
+        </span>
+        <span className="text-xs font-black text-slate-500">{label}</span>
+      </div>
+      <span className="text-sm font-black text-slate-950">{value}</span>
+    </div>
   );
 }
 

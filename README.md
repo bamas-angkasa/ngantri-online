@@ -30,22 +30,22 @@ Tagline: **Datang pas giliranmu.**
 
 ## Local Development
 
-Install dependencies:
+Install frontend dependencies:
 
 ```bash
-pnpm install
+npm run frontend:install
 ```
 
 Run frontend:
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Run backend:
 
 ```bash
-pnpm api:dev
+npm run api:dev
 ```
 
 Frontend runs on `http://localhost:3000`.
@@ -54,15 +54,22 @@ Backend runs on `http://localhost:8080`.
 ## Verification
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm build
-pnpm api:test
+npm run lint
+npm run typecheck
+npm run build
+npm run api:test
 ```
 
 ## Environment
 
-Copy `.env.example` to `.env.local` for frontend values and/or `.env` for backend shell usage.
+The repo is organized as:
+
+- `frontend/` for the Next.js app
+- `backend/` for the Go API
+- `docs/` for planning and API notes
+
+Copy `frontend/.env.example` to `frontend/.env.local` for frontend values.
+Copy `.env.example` to `.env` for backend shell usage.
 
 Key variables:
 
