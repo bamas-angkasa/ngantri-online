@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: Ngantri API
+  version: 0.1.0
+  description: REST API for Ngantri queue management and reservation SaaS.
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: API is healthy
+  /api/auth/register:
+    post:
+      summary: Register with email and password
+      responses:
+        "501":
+          description: Handler scaffolded
+  /api/auth/login:
+    post:
+      summary: Login with email and password
+      responses:
+        "501":
+          description: Handler scaffolded
+  /api/public/{businessSlug}/{branchSlug}/live-queue:
+    get:
+      summary: Public live queue for a branch
+      parameters:
+        - name: businessSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: branchSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          description: Handler scaffolded
+  /api/branches/{branchId}/queues:
+    post:
+      summary: Create queue item with subscription limit enforcement
+      parameters:
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          description: Handler scaffolded
+  /api/branches/{branchId}/queues/call-next:
+    post:
+      summary: Call next queue item for a branch or staff lane
+      parameters:
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "501":
+          description: Handler scaffolded
