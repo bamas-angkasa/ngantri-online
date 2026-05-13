@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 import { NgantriLogo } from "@/components/ngantri/logo";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser, logout as logoutRequest } from "@/lib/api/auth";
 
 const navItems = [
   ["Overview", "/dashboard"],
@@ -27,6 +32,18 @@ export function DashboardShell({
   description: string;
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { data: user } = useQuery({
+    queryKey: ["current-user"],
+    queryFn: getCurrentUser,
+    retry: false,
+  });
+
+  async function logout() {
+    await logoutRequest();
+    router.push("/login");
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-border bg-card p-5 lg:block">
@@ -48,9 +65,20 @@ export function DashboardShell({
               <h1 className="text-2xl font-black">{title}</h1>
               <p className="mt-1 text-sm font-semibold text-muted-foreground">{description}</p>
             </div>
-            <Button className="hidden h-11 rounded-2xl font-black sm:inline-flex">
-              Ambil Nomor
-            </Button>
+            <div className="flex items-center gap-3">
+              {user && (
+                <div className="hidden text-right sm:block">
+                  <p className="text-sm font-black">{user.name}</p>
+                  <p className="text-xs font-semibold text-muted-foreground">{user.email}</p>
+                </div>
+              )}
+              <Button asChild className="hidden h-11 rounded-2xl font-black sm:inline-flex">
+                <Link href="/dashboard/queues">Ambil Nomor</Link>
+              </Button>
+              <Button type="button" variant="outline" className="h-11 rounded-2xl font-black" onClick={logout}>
+                Keluar
+              </Button>
+            </div>
           </div>
         </header>
         <div className="px-4 py-6 sm:px-6 lg:px-8">{children}</div>
