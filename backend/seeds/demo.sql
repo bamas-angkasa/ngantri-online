@@ -1,8 +1,16 @@
 INSERT INTO users (id, name, email, password_hash, role_global)
 VALUES
-  ('00000000-0000-0000-0000-000000000001', 'Adi Owner', 'owner@barberadi.test', NULL, 'customer'),
+  ('00000000-0000-0000-0000-000000000001', 'Adi Owner', 'owner@barberadi.test', 'argon2id$RvhtLa9LU5YWHJBh3V2uAQ$BS4l2PEyD8I2pdeZ1jiDkkdY0VupGL4NG8RnhiBS9xk', 'customer'),
   ('00000000-0000-0000-0000-000000000002', 'Rina Customer', 'rina@customer.test', NULL, 'customer')
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (email) DO UPDATE
+SET
+  name = EXCLUDED.name,
+  password_hash = CASE
+    WHEN EXCLUDED.password_hash IS NOT NULL THEN EXCLUDED.password_hash
+    ELSE users.password_hash
+  END,
+  role_global = EXCLUDED.role_global,
+  updated_at = now();
 
 INSERT INTO businesses (id, owner_id, name, slug, logo_url, description, subscription_plan, subscription_status)
 VALUES (

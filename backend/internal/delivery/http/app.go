@@ -89,7 +89,7 @@ type bookingResponse struct {
 	ServiceID   string               `json:"serviceId"`
 	StaffID     *string              `json:"staffId,omitempty"`
 	BookingCode string               `json:"bookingCode"`
-	BookingDate string               `json:"bookingDate"`
+	BookingDate time.Time            `json:"bookingDate"`
 	StartTime   time.Time            `json:"startTime"`
 	EndTime     time.Time            `json:"endTime"`
 	Status      domain.BookingStatus `json:"status"`
@@ -552,15 +552,18 @@ func (handler AppHandler) CreateQueue(w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusInternalServerError, "usage_error", "Gagal memperbarui kuota.")
 		return
 	}
-	_, _ = tx.Exec(r.Context(), `
-		INSERT INTO notification_logs (business_id, customer_id, type, channel, recipient, payload_json)
-		VALUES ($1, $2, 'queue_created', 'mock', $3, jsonb_build_object('queueNumber', $4))
-	`, businessID, customerID, request.CustomerEmail, queueNumber)
-
 	if err := tx.Commit(r.Context()); err != nil {
 		respondError(w, http.StatusInternalServerError, "database_error", "Gagal menyimpan antrean.")
 		return
 	}
+	recipient := strings.TrimSpace(request.CustomerEmail)
+	if recipient == "" {
+		recipient = "customer@ngantri.local"
+	}
+	_, _ = handler.db.Exec(r.Context(), `
+		INSERT INTO notification_logs (business_id, customer_id, type, channel, recipient, payload_json)
+		VALUES ($1, $2, 'queue_created', 'mock', $3, jsonb_build_object('queueNumber', $4))
+	`, businessID, customerID, recipient, queueNumber)
 	respondData(w, http.StatusCreated, queue)
 }
 
@@ -705,14 +708,18 @@ func (handler AppHandler) CreateBooking(w http.ResponseWriter, r *http.Request) 
 		respondError(w, http.StatusBadRequest, "booking_create_failed", "Gagal membuat booking.")
 		return
 	}
-	_, _ = tx.Exec(r.Context(), `
-		INSERT INTO notification_logs (business_id, customer_id, type, channel, recipient, payload_json)
-		VALUES ($1, $2, 'booking_confirmed', 'mock', $3, jsonb_build_object('bookingCode', $4))
-	`, businessID, customerID, request.CustomerEmail, code)
 	if err := tx.Commit(r.Context()); err != nil {
 		respondError(w, http.StatusInternalServerError, "database_error", "Gagal menyimpan booking.")
 		return
 	}
+	recipient := strings.TrimSpace(request.CustomerEmail)
+	if recipient == "" {
+		recipient = "customer@ngantri.local"
+	}
+	_, _ = handler.db.Exec(r.Context(), `
+		INSERT INTO notification_logs (business_id, customer_id, type, channel, recipient, payload_json)
+		VALUES ($1, $2, 'booking_confirmed', 'mock', $3, jsonb_build_object('bookingCode', $4))
+	`, businessID, customerID, recipient, code)
 	respondData(w, http.StatusCreated, booking)
 }
 

@@ -132,6 +132,7 @@ The default seed file is `seeds/demo.sql`. You can pass another SQL file path:
 The seed creates:
 
 - Demo owner: `owner@barberadi.test`
+- Demo owner password: `DemoOwner123!`
 - Demo customer: `rina@customer.test`
 - Business: `Barber Adi` with slug `barber-adi`
 - Branches: `sawojajar` and `sulfat`
@@ -147,7 +148,9 @@ The seed is safe to rerun because inserts use conflict handling.
 From the backend directory:
 
 ```powershell
-go run ./cmd/api
+New-Item -ItemType Directory -Force .bin
+go build -o ./.bin/api.exe ./cmd/api
+./.bin/api.exe
 ```
 
 Or from the repo root:
@@ -172,6 +175,17 @@ Expected response:
 
 Most API routes are currently scaffolded and return `501 Not Implemented` until
 their handlers are implemented.
+
+Implemented auth routes:
+
+- `POST /api/auth/login`: email/password login, returns a Bearer token.
+- `GET /api/me`: returns the logged-in user when called with
+  `Authorization: Bearer <token>`.
+
+Demo login after running seed:
+
+- Email: `owner@barberadi.test`
+- Password: `DemoOwner123!`
 
 ## Test
 
