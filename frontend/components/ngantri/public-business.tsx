@@ -1,22 +1,54 @@
 "use client";
 
 import { CalendarClock, Clock3, MapPin, QrCode, Scissors } from "lucide-react";
+import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StaffLaneQueueBoard } from "@/components/ngantri/live-queue-board";
-import { useDemoPublicBusiness } from "@/lib/api/queries";
+import { createQueue } from "@/lib/api/queue";
+import { usePublicBusiness } from "@/lib/api/queries";
 
-export function PublicBusinessPage({ branchSlug }: { branchSlug?: string }) {
-  const { data } = useDemoPublicBusiness();
+export function PublicBusinessPage({ businessSlug, branchSlug }: { businessSlug: string; branchSlug?: string }) {
+  const queryClient = useQueryClient();
+  const { data, isLoading, error } = usePublicBusiness(businessSlug, branchSlug);
+  const createQueueMutation = useMutation({
+    mutationFn: createQueue,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["public-business", businessSlug, branchSlug] }),
+  });
 
-  if (!data) {
-    return null;
+  if (isLoading) {
+    return <main className="grid min-h-screen place-items-center bg-background text-sm font-bold text-muted-foreground">Memuat antrean...</main>;
+  }
+
+  if (error || !data) {
+    return <main className="grid min-h-screen place-items-center bg-background text-sm font-bold text-destructive">Halaman antrean belum tersedia.</main>;
   }
 
   const branch = data.branches.find((item) => item.slug === branchSlug) ?? data.branches[0];
+  if (!branch) {
+    return <main className="grid min-h-screen place-items-center bg-background text-sm font-bold text-destructive">Cabang belum tersedia.</main>;
+  }
+
   const branchQueues = data.queues.filter((queue) => queue.branchId === branch.id);
+  const currentQueue = branchQueues.find((queue) => queue.status === "serving" || queue.status === "called");
+  const nextService = data.services[0];
+  const availableStaffId = data.staff.find((item) => item.isAvailable)?.id;
+
+  function takeNumber() {
+    if (!branch || !nextService) {
+      return;
+    }
+    createQueueMutation.mutate({
+      branchId: branch.id,
+      serviceId: nextService.id,
+      staffId: availableStaffId,
+      customerName: "Customer Online",
+      source: "online",
+    });
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -33,11 +65,11 @@ export function PublicBusinessPage({ branchSlug }: { branchSlug?: string }) {
           <Card className="rounded-[28px] border-0 shadow-xl shadow-slate-900/10 dark:shadow-black/20">
             <CardContent className="grid gap-4 p-5 sm:grid-cols-3">
               <Info icon={MapPin} label="Cabang" value={branch.name} />
-              <Info icon={Clock3} label="Sekarang Dilayani" value="A-01" />
-              <Info icon={CalendarClock} label="Estimasi" value="18 menit" />
+              <Info icon={Clock3} label="Sekarang Dilayani" value={currentQueue?.queueNumber ?? "-"} />
+              <Info icon={CalendarClock} label="Estimasi" value={`${data.analytics.averageWaitMinutes} menit`} />
             </CardContent>
           </Card>
-          <StaffLaneQueueBoard staff={data.staff} queues={branchQueues} />
+          <StaffLaneQueueBoard mode="public" staff={data.staff} queues={branchQueues} />
         </div>
 
         <Card className="h-fit rounded-[28px] shadow-sm">
@@ -58,9 +90,18 @@ export function PublicBusinessPage({ branchSlug }: { branchSlug?: string }) {
               ))}
             </div>
             <div className="mt-5 grid gap-3">
-              <Button className="h-12 rounded-2xl font-black">Ambil Nomor</Button>
-              <Button variant="outline" className="h-12 rounded-2xl font-black">Booking Online</Button>
+              <Button className="h-12 rounded-2xl font-black" disabled={!nextService || createQueueMutation.isPending} onClick={takeNumber}>
+                {createQueueMutation.isPending ? "Mengambil nomor..." : "Ambil Nomor"}
+              </Button>
+              <Button asChild variant="outline" className="h-12 rounded-2xl font-black">
+                <Link href={`/${data.business.slug}/${branch.slug}/booking`}>Booking Online</Link>
+              </Button>
             </div>
+            {createQueueMutation.data && (
+              <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-black text-emerald-800">
+                Nomor kamu {createQueueMutation.data.queueNumber}. Simpan halaman ini untuk pantau antrean.
+              </div>
+            )}
             <div className="mt-5 flex items-center gap-3 rounded-2xl bg-muted p-4">
               <QrCode className="size-5 text-primary" />
               <p className="text-sm font-bold text-muted-foreground">QR cabang siap dicetak dari dashboard.</p>

@@ -3,8 +3,8 @@ import { PublicBusinessPage } from "@/components/ngantri/public-business";
 export default async function BranchPublicPage({
   params,
 }: {
-  params: Promise<{ branchSlug: string }>;
+  params: Promise<{ businessSlug: string; branchSlug: string }>;
 }) {
-  const { branchSlug } = await params;
-  return <PublicBusinessPage branchSlug={branchSlug} />;
+  const { businessSlug, branchSlug } = await params;
+  return <PublicBusinessPage businessSlug={businessSlug} branchSlug={branchSlug} />;
 }

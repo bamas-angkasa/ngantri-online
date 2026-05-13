@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { apiRequest } from "@/lib/api/client";
 import type { AnalyticsOverview, Branch, BranchStaff, Business, QueueItem, Service } from "@/lib/contracts";
 
 const demoBusiness: Business = {
@@ -138,5 +139,68 @@ export function useDemoDashboard() {
       queues: demoQueues,
       analytics: demoAnalytics,
     }),
+  });
+}
+
+export type PublicBusinessPayload = {
+  business: Business;
+  branches: Branch[];
+  staff: BranchStaff[];
+  services: Service[];
+  queues: QueueItem[];
+  analytics: AnalyticsOverview;
+};
+
+export type DashboardPayload = PublicBusinessPayload & {
+  activeBranch: Branch;
+};
+
+export async function fetchPublicBusiness(businessSlug: string, branchSlug?: string) {
+  const path = branchSlug ? `/api/public/${businessSlug}/${branchSlug}` : `/api/public/${businessSlug}`;
+  return apiRequest<PublicBusinessPayload>(path);
+}
+
+export async function fetchDashboard() {
+  const businesses = await apiRequest<Business[]>("/api/businesses/");
+  const business = businesses[0];
+  if (!business) {
+    throw new Error("Belum ada bisnis.");
+  }
+
+  const branches = await apiRequest<Branch[]>(`/api/businesses/${business.id}/branches`);
+  const activeBranch = branches[0];
+  if (!activeBranch) {
+    throw new Error("Belum ada cabang.");
+  }
+
+  const [staff, services, queues, analytics] = await Promise.all([
+    apiRequest<BranchStaff[]>(`/api/branches/${activeBranch.id}/staff`),
+    apiRequest<Service[]>(`/api/businesses/${business.id}/services`),
+    apiRequest<QueueItem[]>(`/api/branches/${activeBranch.id}/queues`),
+    apiRequest<AnalyticsOverview>(`/api/branches/${activeBranch.id}/analytics/overview`),
+  ]);
+
+  return {
+    business,
+    branches,
+    activeBranch,
+    staff,
+    services,
+    queues,
+    analytics,
+  };
+}
+
+export function usePublicBusiness(businessSlug: string, branchSlug?: string) {
+  return useQuery({
+    queryKey: ["public-business", businessSlug, branchSlug],
+    queryFn: () => fetchPublicBusiness(businessSlug, branchSlug),
+  });
+}
+
+export function useDashboardData() {
+  return useQuery({
+    queryKey: ["dashboard"],
+    queryFn: fetchDashboard,
   });
 }
