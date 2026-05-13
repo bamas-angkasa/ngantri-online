@@ -13,6 +13,8 @@ import {
   Clock3,
   LayoutDashboard,
   Menu,
+  MessageCircle,
+  QrCode,
   Radio,
   Scissors,
   Sparkles,
@@ -28,27 +30,54 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const pains = [
-  "Pelanggan terus tanya posisi antrean lewat chat.",
-  "Admin bolak-balik cek catatan, staff, dan booking.",
-  "Walk-in dan reservasi mudah tercampur saat jam ramai.",
+  {
+    icon: MessageCircle,
+    title: "Chat posisi antrean tidak berhenti",
+    signal: "12 chat/jam",
+    example: "Contoh: pelanggan tanya, \"Mas, masih lama?\" padahal admin sedang melayani.",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Admin pindah-pindah catatan saat jam ramai",
+    signal: "3 sumber data",
+    example: "Contoh: nomor walk-in ada di buku, booking ada di WhatsApp, staff tanya urutan berikutnya.",
+  },
+  {
+    icon: Clock3,
+    title: "Pelanggan datang terlalu cepat atau terlambat",
+    signal: "18 menit meleset",
+    example: "Contoh: kursi penuh, pelanggan menunggu lama, lalu pergi sebelum gilirannya dipanggil.",
+  },
 ];
 
 const steps = [
   {
+    icon: QrCode,
     title: "Buat halaman bisnis",
-    text: "Setiap cabang punya link antrean publik yang bisa dibagikan lewat bio, Google Maps, atau QR.",
+    actor: "Owner",
+    action: "Bagikan link atau QR cabang",
+    detail: "Profil layanan, staff, jam buka, dan aturan antrean tersimpan di satu halaman publik.",
   },
   {
+    icon: Ticket,
     title: "Pelanggan ambil nomor",
-    text: "Mereka melihat antrean realtime, estimasi tunggu, lalu ambil nomor atau booking dari HP.",
+    actor: "Pelanggan",
+    action: "Pilih layanan dari HP",
+    detail: "Mereka melihat nomor aktif, sisa antrean, dan estimasi sebelum memutuskan datang.",
   },
   {
+    icon: LayoutDashboard,
     title: "Admin panggil giliran",
-    text: "Staff memanggil, skip, atau menyelesaikan antrean dari dashboard yang ringkas.",
+    actor: "Staff",
+    action: "Panggil, skip, atau selesai",
+    detail: "Dashboard menjaga urutan walk-in dan booking tetap jelas untuk tiap meja layanan.",
   },
   {
+    icon: BellRing,
     title: "Pelanggan datang tepat waktu",
-    text: "Notifikasi dan estimasi membantu pelanggan berangkat saat gilirannya sudah dekat.",
+    actor: "Sistem",
+    action: "Kirim update saat nomor dekat",
+    detail: "Pelanggan punya alasan yang jelas kapan harus berangkat, bukan menebak dari chat.",
   },
 ];
 
@@ -279,22 +308,60 @@ function ProblemSection() {
           keputusan lebih cepat, dan operasional terasa lebih rapi.
         </p>
       </div>
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {pains.map((pain, index) => (
-          <motion.div
-            key={pain}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ delay: index * 0.08 }}
-            className="rounded-lg border border-border bg-card p-5 shadow-sm"
-          >
-            <span className="grid size-10 place-items-center rounded-lg bg-muted text-sm font-black text-muted-foreground">
-              0{index + 1}
+
+      <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-1">
+          {pains.map((pain, index) => (
+            <motion.div
+              key={pain.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.08 }}
+              className="rounded-lg border border-border bg-card p-5 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="grid size-10 place-items-center rounded-lg bg-muted text-primary">
+                    <pain.icon className="size-5" />
+                  </span>
+                  <span className="text-sm font-black text-muted-foreground">0{index + 1}</span>
+                </div>
+                <span className="rounded-lg bg-primary/10 px-3 py-1 text-xs font-black text-primary">
+                  {pain.signal}
+                </span>
+              </div>
+              <h3 className="mt-5 text-lg font-black leading-7">{pain.title}</h3>
+              <p className="mt-3 text-sm font-semibold leading-7 text-muted-foreground">{pain.example}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="rounded-lg border border-border bg-slate-950 p-5 text-white shadow-sm">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-300">
+                Situasi jam ramai
+              </p>
+              <h3 className="mt-2 text-xl font-black">Sabtu, 16.30</h3>
+            </div>
+            <span className="rounded-lg bg-white/10 px-3 py-1 text-xs font-black text-white">
+              Walk-in + booking
             </span>
-            <p className="mt-5 text-lg font-black leading-7">{pain}</p>
-          </motion.div>
-        ))}
+          </div>
+          <div className="mt-5 grid gap-3">
+            <ProblemSignal label="Pelanggan di tempat" value="9 orang" />
+            <ProblemSignal label="Booking masuk" value="4 jadwal" />
+            <ProblemSignal label="Chat tanya giliran" value="Belum berhenti" />
+          </div>
+          <div className="mt-5 rounded-lg bg-white/10 p-4">
+            <p className="text-sm font-black">Yang bikin macet bukan ramainya.</p>
+            <p className="mt-2 text-sm font-semibold leading-7 text-slate-300">
+              Yang bikin staff kewalahan adalah semua orang butuh kepastian di
+              waktu yang sama: nomor berapa, siapa berikutnya, dan kapan harus datang.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -304,23 +371,80 @@ function FlowSection() {
   return (
     <section id="alur" className="border-y border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <div className="max-w-2xl">
-          <SectionLabel>Satu flow sederhana</SectionLabel>
-          <h2 className="mt-4 text-3xl font-black leading-tight tracking-normal sm:text-4xl">
-            Dari link publik sampai pelanggan datang pas giliran.
-          </h2>
+        <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
+          <div className="max-w-2xl">
+            <SectionLabel>Satu flow sederhana</SectionLabel>
+            <h2 className="mt-4 text-3xl font-black leading-tight tracking-normal sm:text-4xl">
+              Dari link publik sampai pelanggan datang pas giliran.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-base leading-8 text-muted-foreground">
+            Alurnya dibuat seperti handoff harian: owner menyiapkan link, pelanggan
+            mengambil nomor, staff menggerakkan antrean, lalu sistem memberi kabar.
+          </p>
         </div>
-        <div className="mt-10 grid gap-4 lg:grid-cols-4">
-          {steps.map((step, index) => (
-            <div key={step.title} className="rounded-lg border border-border bg-background p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-black text-primary">Langkah {index + 1}</span>
-                {index < steps.length - 1 && <ChevronRight className="hidden size-5 text-muted-foreground lg:block" />}
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px]">
+          <div className="grid gap-4 md:grid-cols-2">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: index * 0.08 }}
+                className="relative rounded-lg border border-border bg-background p-5 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="grid size-11 place-items-center rounded-lg bg-primary/10 text-primary">
+                      <step.icon className="size-5" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
+                        Langkah {index + 1}
+                      </p>
+                      <p className="mt-1 text-sm font-black text-primary">{step.actor}</p>
+                    </div>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <ChevronRight className="hidden size-5 text-muted-foreground md:block" />
+                  )}
+                </div>
+                <h3 className="mt-5 text-xl font-black">{step.title}</h3>
+                <p className="mt-3 text-sm font-black leading-6 text-foreground">{step.action}</p>
+                <p className="mt-3 text-sm font-semibold leading-7 text-muted-foreground">{step.detail}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="rounded-lg border border-border bg-background p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+                  Contoh hari ini
+                </p>
+                <h3 className="mt-2 text-xl font-black">Barber Adi Sulfat</h3>
               </div>
-              <h3 className="mt-5 text-lg font-black">{step.title}</h3>
-              <p className="mt-3 text-sm font-semibold leading-7 text-muted-foreground">{step.text}</p>
+              <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+                Live
+              </span>
             </div>
-          ))}
+            <div className="mt-5 grid gap-3">
+              <FlowStatusRow icon={QrCode} label="QR di meja kasir" value="ngantri.id/barber-adi/sulfat" />
+              <FlowStatusRow icon={Ticket} label="Nomor baru" value="A-16, Potong Rambut" />
+              <FlowStatusRow icon={Users} label="Sedang dilayani" value="A-12 oleh Adi" />
+              <FlowStatusRow icon={Clock3} label="Estimasi pelanggan" value="Datang sekitar 18 menit lagi" />
+              <FlowStatusRow icon={MessageCircle} label="Update otomatis" value="Nomor kamu sudah dekat" />
+            </div>
+            <div className="mt-5 rounded-lg bg-primary p-4 text-primary-foreground">
+              <p className="text-sm font-black">Dampaknya terasa di meja depan</p>
+              <p className="mt-2 text-sm font-semibold leading-7 text-primary-foreground/80">
+                Pelanggan tidak perlu menebak, staff tidak perlu menjawab chat
+                berulang, dan owner bisa melihat ritme layanan dari dashboard.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -540,6 +664,37 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     <span className="inline-flex rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary">
       {children}
     </span>
+  );
+}
+
+function FlowStatusRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-lg bg-muted p-3">
+      <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-lg bg-background text-primary">
+        <Icon className="size-4" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs font-bold text-muted-foreground">{label}</p>
+        <p className="mt-1 break-words text-sm font-black leading-6">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function ProblemSignal({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-lg bg-white/10 p-3">
+      <p className="text-sm font-semibold text-slate-300">{label}</p>
+      <p className="text-sm font-black text-white">{value}</p>
+    </div>
   );
 }
 

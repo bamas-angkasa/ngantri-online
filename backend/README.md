@@ -151,12 +151,41 @@ npm run api:test
 - `cmd/api`: API entry point
 - `internal/config`: environment configuration
 - `internal/domain`: core entities, enums, and errors
-- `internal/service`: business rules such as queue estimation and subscription limits
-- `internal/repository`: PostgreSQL repository layer placeholder
+- `internal/service`: business rules such as queue estimation, subscription limits, and tenant access
+- `internal/repository`: PostgreSQL repository contracts and tenant-scoped query guidance
 - `internal/delivery/http`: REST router
-- `internal/middleware`: auth and RBAC middleware hooks
+- `internal/middleware`: auth, RBAC, and tenant context middleware hooks
 - `internal/pkg/auth`: password hashing and future JWT helpers
 - `internal/pkg/database`: PostgreSQL connection helper
 - `internal/pkg/notification`: notification provider abstraction
 - `migrations`: PostgreSQL schema and seed data
 - `openapi.yaml`: API documentation starter
+
+## Multi-Tenant Backend Plan
+
+The tenant boundary is `businesses.id`. Every tenant-owned table stores
+`business_id` directly, except branch staff where branch ownership is enforced
+through the branch relationship.
+
+Current foundation:
+
+- Business routes with `{id}` or `{businessId}` populate `domain.Tenant` in the
+  request context.
+- `TenantAccessPolicy` centralizes super admin and owner/admin decisions.
+- Repository contracts define membership lookup and branch-to-business
+  resolution.
+- SQL constraints prevent queues/bookings from mixing branches, services, or
+  staff across tenants.
+
+Recommended implementation order:
+
+1. Auth: real JWT validation, refresh tokens, password login, Google OAuth.
+2. Tenant gate: handler middleware that loads membership via `TenantRepository`
+   and applies `TenantAccessPolicy`.
+3. Repositories: implement business, branch, service, queue, booking, and
+   subscription repositories with mandatory `business_id` filters.
+4. Public reads: resolve `{businessSlug}/{branchSlug}` to tenant/branch IDs and
+   return only active public data.
+5. Queue writes: create queue in a transaction that checks subscription usage,
+   inserts the queue item, increments `usage_counters`, and logs notification.
+6. Admin: isolate super-admin routes from business owner routes.

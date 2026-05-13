@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"ngantri/backend/internal/config"
+	"ngantri/backend/internal/middleware"
 )
 
 func NewRouter(cfg config.Config) http.Handler {
@@ -31,16 +32,16 @@ func NewRouter(cfg config.Config) http.Handler {
 		api.Route("/businesses", func(businesses chi.Router) {
 			businesses.Get("/", placeholder("businesses.list"))
 			businesses.Post("/", placeholder("businesses.create"))
-			businesses.Get("/{id}", placeholder("businesses.get"))
-			businesses.Put("/{id}", placeholder("businesses.update"))
-			businesses.Delete("/{id}", placeholder("businesses.delete"))
-			businesses.Get("/{businessId}/services", placeholder("services.list"))
-			businesses.Post("/{businessId}/services", placeholder("services.create"))
-			businesses.Get("/{businessId}/theme", placeholder("theme.get"))
-			businesses.Put("/{businessId}/theme", placeholder("theme.update"))
-			businesses.Get("/{businessId}/analytics/overview", placeholder("analytics.business_overview"))
-			businesses.Get("/{businessId}/branches", placeholder("branches.list"))
-			businesses.Post("/{businessId}/branches", placeholder("branches.create"))
+			businesses.With(middleware.RequireTenantParam("id")).Get("/{id}", placeholder("businesses.get"))
+			businesses.With(middleware.RequireTenantParam("id")).Put("/{id}", placeholder("businesses.update"))
+			businesses.With(middleware.RequireTenantParam("id")).Delete("/{id}", placeholder("businesses.delete"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Get("/{businessId}/services", placeholder("services.list"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Post("/{businessId}/services", placeholder("services.create"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Get("/{businessId}/theme", placeholder("theme.get"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Put("/{businessId}/theme", placeholder("theme.update"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Get("/{businessId}/analytics/overview", placeholder("analytics.business_overview"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Get("/{businessId}/branches", placeholder("branches.list"))
+			businesses.With(middleware.RequireTenantParam("businessId")).Post("/{businessId}/branches", placeholder("branches.create"))
 		})
 
 		api.Route("/branches", func(branches chi.Router) {

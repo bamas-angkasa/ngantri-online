@@ -92,3 +92,5 @@ Key variables:
 9. Mock notification logs
 
 See `docs/mvp-roadmap.md` and `docs/api-endpoints.md` for the detailed plan.
+
+For frontend component and content review notes, see `docs/frontend-component-content-review.md`.

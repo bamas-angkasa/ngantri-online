@@ -45,6 +45,7 @@ CREATE TABLE branches (
   open_hours_json JSONB NOT NULL DEFAULT '{}'::jsonb,
   is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (business_id, id),
   UNIQUE (business_id, slug)
 );
 
@@ -56,19 +57,25 @@ CREATE TABLE branch_staff (
   role_label TEXT NOT NULL DEFAULT 'Staff',
   avatar_url TEXT,
   is_available BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (branch_id, id)
 );
 
 CREATE TABLE services (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
-  branch_id UUID REFERENCES branches(id) ON DELETE CASCADE,
+  branch_id UUID,
   name TEXT NOT NULL,
   description TEXT,
   duration_minutes INT NOT NULL CHECK (duration_minutes > 0),
   price BIGINT,
   is_active BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (business_id, id),
+  CONSTRAINT services_branch_tenant_fk
+    FOREIGN KEY (business_id, branch_id)
+    REFERENCES branches(business_id, id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE queues (
@@ -87,7 +94,17 @@ CREATE TABLE queues (
   completed_at TIMESTAMPTZ,
   cancelled_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE (branch_id, queue_number)
+  UNIQUE (branch_id, queue_number),
+  CONSTRAINT queues_branch_tenant_fk
+    FOREIGN KEY (business_id, branch_id)
+    REFERENCES branches(business_id, id)
+    ON DELETE CASCADE,
+  CONSTRAINT queues_service_tenant_fk
+    FOREIGN KEY (business_id, service_id)
+    REFERENCES services(business_id, id),
+  CONSTRAINT queues_staff_branch_fk
+    FOREIGN KEY (branch_id, staff_id)
+    REFERENCES branch_staff(branch_id, id)
 );
 
 CREATE INDEX queues_branch_status_created_idx ON queues(branch_id, status, created_at);
@@ -106,7 +123,17 @@ CREATE TABLE bookings (
   end_time TIMESTAMPTZ NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'checked_in', 'serving', 'completed', 'cancelled', 'no_show')),
   notes TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT bookings_branch_tenant_fk
+    FOREIGN KEY (business_id, branch_id)
+    REFERENCES branches(business_id, id)
+    ON DELETE CASCADE,
+  CONSTRAINT bookings_service_tenant_fk
+    FOREIGN KEY (business_id, service_id)
+    REFERENCES services(business_id, id),
+  CONSTRAINT bookings_staff_branch_fk
+    FOREIGN KEY (branch_id, staff_id)
+    REFERENCES branch_staff(branch_id, id)
 );
 
 CREATE INDEX bookings_branch_date_idx ON bookings(branch_id, booking_date, status);
