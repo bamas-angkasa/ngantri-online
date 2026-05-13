@@ -872,19 +872,19 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="px-4 pb-10 pt-4 sm:px-6 lg:px-8 lg:pb-14">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-[34px] border border-slate-100 bg-white shadow-xl shadow-slate-900/5">
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1fr] lg:p-10">
+    <footer className="mt-8 border-t border-slate-200 bg-slate-950 text-white">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_0.85fr_1fr]">
           <div>
             <a className="inline-flex items-center gap-3" href="#">
               <NgantriLogo iconClassName="size-14" />
-              <span className="text-xl font-black tracking-tight text-slate-950">Ngantri</span>
+              <span className="text-xl font-black tracking-tight">Ngantri</span>
             </a>
-            <p className="mt-4 max-w-sm text-sm font-semibold leading-7 text-slate-600">
+            <p className="mt-4 max-w-sm text-sm font-semibold leading-7 text-slate-300">
               Antrean realtime untuk UMKM jasa. Pelanggan tahu kapan berangkat,
               admin lebih ringan mengatur meja layanan.
             </p>
-            <div className="mt-5 inline-flex items-center rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+            <div className="mt-5 inline-flex items-center rounded-full bg-emerald-400/10 px-3 py-2 text-xs font-black text-emerald-200">
               <LiveDot />
               Live queue ready
             </div>
@@ -909,8 +909,8 @@ function Footer() {
             ]}
           />
 
-          <div className="rounded-[26px] bg-slate-50 p-4">
-            <p className="text-sm font-black text-slate-950">Contoh status hari ini</p>
+          <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+            <p className="text-sm font-black">Contoh status hari ini</p>
             <div className="mt-4 space-y-3">
               <FooterStatus icon={Ticket} label="Nomor aktif" value="A-13" />
               <FooterStatus icon={Clock3} label="Estimasi rata-rata" value="18 menit" />
@@ -918,16 +918,16 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-3 border-t border-slate-100 px-6 py-5 text-sm font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <p>© 2026 Ngantri. Datang pas giliranmu.</p>
+        <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-5 text-sm font-semibold text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <p>(c) 2026 Ngantri. Datang pas giliranmu.</p>
           <div className="flex flex-wrap gap-4">
-            <a className="transition hover:text-blue-600" href="#">
+            <a className="transition hover:text-white" href="#">
               Privasi
             </a>
-            <a className="transition hover:text-blue-600" href="#">
+            <a className="transition hover:text-white" href="#">
               Ketentuan
             </a>
-            <a className="transition hover:text-blue-600" href="#">
+            <a className="transition hover:text-white" href="#">
               Kontak
             </a>
           </div>
@@ -940,10 +940,10 @@ function Footer() {
 function FooterColumn({ title, links }: { title: string; links: [string, string][] }) {
   return (
     <div>
-      <p className="text-sm font-black text-slate-950">{title}</p>
+      <p className="text-sm font-black text-white">{title}</p>
       <div className="mt-4 grid gap-3">
         {links.map(([label, href]) => (
-          <a key={label} className="text-sm font-semibold text-slate-500 transition hover:text-blue-600" href={href}>
+          <a key={label} className="text-sm font-semibold text-slate-400 transition hover:text-white" href={href}>
             {label}
           </a>
         ))}
@@ -962,14 +962,14 @@ function FooterStatus({
   value: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-[20px] bg-white p-3 shadow-sm">
+    <div className="flex items-center justify-between gap-3 rounded-[20px] bg-white/10 p-3">
       <div className="flex items-center gap-3">
-        <span className="grid size-9 place-items-center rounded-2xl bg-blue-50 text-blue-700">
+        <span className="grid size-9 place-items-center rounded-2xl bg-blue-500/15 text-blue-200">
           <Icon className="size-4" />
         </span>
-        <span className="text-xs font-black text-slate-500">{label}</span>
+        <span className="text-xs font-black text-slate-400">{label}</span>
       </div>
-      <span className="text-sm font-black text-slate-950">{value}</span>
+      <span className="text-sm font-black text-white">{value}</span>
     </div>
   );
 }
