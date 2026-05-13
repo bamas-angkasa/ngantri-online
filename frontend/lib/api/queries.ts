@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { apiRequest } from "@/lib/api/client";
-import type { AnalyticsOverview, Branch, BranchStaff, Business, QueueItem, Service } from "@/lib/contracts";
+import type { AnalyticsOverview, Booking, Branch, BranchStaff, Business, QueueItem, Service, User } from "@/lib/contracts";
 
 const demoBusiness: Business = {
   id: "10000000-0000-0000-0000-000000000001",
@@ -153,6 +153,8 @@ export type PublicBusinessPayload = {
 
 export type DashboardPayload = PublicBusinessPayload & {
   activeBranch: Branch;
+  bookings: Booking[];
+  qrUrl?: string;
 };
 
 export async function fetchPublicBusiness(businessSlug: string, branchSlug?: string) {
@@ -173,11 +175,13 @@ export async function fetchDashboard() {
     throw new Error("Belum ada cabang.");
   }
 
-  const [staff, services, queues, analytics] = await Promise.all([
+  const [staff, services, queues, bookings, analytics, qr] = await Promise.all([
     apiRequest<BranchStaff[]>(`/api/branches/${activeBranch.id}/staff`),
     apiRequest<Service[]>(`/api/businesses/${business.id}/services`),
     apiRequest<QueueItem[]>(`/api/branches/${activeBranch.id}/queues`),
+    apiRequest<Booking[]>(`/api/branches/${activeBranch.id}/bookings`),
     apiRequest<AnalyticsOverview>(`/api/branches/${activeBranch.id}/analytics/overview`),
+    apiRequest<{ url: string }>(`/api/branches/${activeBranch.id}/qr`).catch(() => undefined),
   ]);
 
   return {
@@ -187,7 +191,9 @@ export async function fetchDashboard() {
     staff,
     services,
     queues,
+    bookings,
     analytics,
+    qrUrl: qr?.url,
   };
 }
 
@@ -202,5 +208,21 @@ export function useDashboardData() {
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: fetchDashboard,
+  });
+}
+
+export async function fetchAdminData() {
+  const [businesses, users] = await Promise.all([
+    apiRequest<Business[]>("/api/admin/businesses"),
+    apiRequest<User[]>("/api/admin/users"),
+  ]);
+
+  return { businesses, users };
+}
+
+export function useAdminData() {
+  return useQuery({
+    queryKey: ["admin"],
+    queryFn: fetchAdminData,
   });
 }

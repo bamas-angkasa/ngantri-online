@@ -1,1 +1,1 @@
-export { default } from "../queues/page";
+export { AnalyticsPage as default } from "@/components/ngantri/dashboard-resource-pages";

@@ -1,1 +1,1 @@
-export { default } from "../queues/page";
+export { StaffPage as default } from "@/components/ngantri/dashboard-resource-pages";

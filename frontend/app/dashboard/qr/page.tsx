@@ -1,1 +1,1 @@
-export { default } from "../queues/page";
+export { QRPage as default } from "@/components/ngantri/dashboard-resource-pages";
